@@ -68,7 +68,7 @@ Computer Architecture 2020 Lab
 
 ## Change Log
 
-* 20120.3.8 发布实验一
+* 2020.3.8 发布实验一
 
 
 ## 致谢
