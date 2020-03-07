@@ -54,11 +54,11 @@ https://vlab.ustc.edu.cn/
 
 ## 文件夹目录
 
-**Lab1** 实验一代码仓库
+**Lab1** （实验一代码仓库）
 
-**Design** RV32I Core设计图
+**Design** （RV32I Core设计图）
 
-**Reference** 实验参考文档
+**Reference** （实验参考文档）
 
 
 
@@ -70,7 +70,7 @@ https://vlab.ustc.edu.cn/
 
 ## Change Log
 
-* 2019.3.7 发布实验
+* 2019.3.8 发布实验一
 
 
 ## 致谢
