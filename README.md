@@ -32,7 +32,7 @@ Computer Architecture 2020 Lab
 * 实验教学中心提供了一个基于互联网的远程进行硬件、系统和软件 7x24 教学实验的平台，可校外登录使用，支持 SSH、浏览器和 VNC 远程桌面的方式来使用（方便 Windows 用户使用 Linux）。这个平台可以通过虚拟机的方式来进行软件和系统方面的实验（基于 Linux 容器的方式使得线上体验和线下机房一致），还能够远程操作已部署好的 FPGA 集群进行硬件实验。
 平台集群基于 Linux 容器搭建，计算与存储分离，提供给学生 7x24 小时使用。架构方面和 Linux 容器部署使用方面的稳定性已经经过多年验证。系统架构方面的瓶颈仅受限于网络带宽。
 这套系统基于 Linux 容器来支持各类系统和软件的虚拟化及远程使用。现有容量支持 300 名以上的轻度使用用户同时在线使用，支持 150 名左右的中度使用用户同时在线，支持 90 名左右的重度使用用户（计算密集型）同时在线。
-使用说明：https://vlab.ustc.edu.cn/docs/vm/，平台地址：https://vlab.ustc.edu.cn/。欢迎大家试用
+使用说明：https://vlab.ustc.edu.cn/docs/vm/，平台地址：https://vlab.ustc.edu.cn/。欢迎大家试用
 
 * 课程实验用到的语言是system verilog(sv, verilog的超集)，所以理论上支持sv并且能仿真的IDE都可以用来做实验，但推荐使用vivado工具(ise 也可)，这里给出vivado的下载链接。链接：https://rec.ustc.edu.cn/share/6c852dc0-547e-11ea-97e2-17bf5890c601
 
