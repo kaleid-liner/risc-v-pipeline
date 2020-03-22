@@ -45,6 +45,12 @@ Computer Architecture 2020 Lab
   提交格式：**Lab1-学号-姓名-n.rar(or .zip)**。要求包括一份**pdf格式**实验报告（如果无法打开会影响最终成绩）  
   提交版本号，从0开始，以最大版本提交文件为准  
 
+* **2020.3.23 Release Lab2**  
+  请完成实验，并在检查后一周内提交实验报告 截止日期：返校后（待定）
+  实验报告提交至BB平台  
+  提交格式：**Lab2-学号-姓名-n.rar(or .zip)**。要求包括一份**pdf格式**实验报告（如果无法打开会影响最终成绩）  
+  提交版本号，从0开始，以最大版本提交文件为准  
+
 
 ## 实验课安排
 
@@ -53,6 +59,8 @@ Computer Architecture 2020 Lab
 ## 文件夹目录
 
 **Lab1** （实验一代码仓库）
+
+**Lab2** （实验二代码仓库）
 
 **Design Figure** （RV32I Core设计图）
 
@@ -70,6 +78,7 @@ Computer Architecture 2020 Lab
 
 * 2020.3.9 发布实验一
 * 2020.3.15 修正了Design Figure的PCE + 4问题（原图计算jarl和jal的链接地址，使用的是PC+8）
+* 2020.3.23 发布实验二，修正了Design Figure的一些问题。大家请根据最新的Design Figure完成实验（新的Design Figure不影响实验一评分）
 
 
 ## 致谢
