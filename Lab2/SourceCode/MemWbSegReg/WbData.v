@@ -51,26 +51,21 @@ module WB_Data_WB(
 
     DataCache DataCache1(
         .clk(clk),
-        .write_en(write_en),
+        .write_en(write_en << addr[1:0]),
         .debug_write_en(debug_write_en),
         .addr(addr[31:2]),
         .debug_addr(debug_addr[31:2]),
-        .in_data(in_data),
+        .in_data(in_data << (8 * addr[1:0])),
         .debug_in_data(debug_in_data),
         .out_data(data_raw),
         .debug_out_data(debug_out_data)
     );
 
 
-    DataExtend DataExtend1(
-        .data(data_raw),
-        .addr(addr[1:0]),
-        .load_type(load_type),
-        .dealt_data(data_WB_raw)
-    );
 
 
-    reg [31:0] dealt_wb_data;
+
+
 
 
 
@@ -81,18 +76,35 @@ module WB_Data_WB(
 
     reg bubble_ff = 1'b0;
     reg flush_ff = 1'b0;
+    reg wb_select_old = 0;
     reg [31:0] data_WB_old = 32'b0;
+    reg [31:0] addr_old;
+    reg [2:0] load_type_old;
+
+    DataExtend DataExtend1(
+        .data(data_raw),
+        .addr(addr_old[1:0]),
+        .load_type(load_type_old),
+        .dealt_data(data_WB_raw)
+    );
 
     always@(posedge clk)
     begin
         bubble_ff <= bubbleW;
         flush_ff <= flushW;
-        dealt_wb_data <= wb_select ? data_WB_raw : addr;
-        data_WB_old <= dealt_wb_data;
+        data_WB_old <= data_WB;
+        addr_old <= addr;
+        wb_select_old <= wb_select;
+        load_type_old <= load_type;
     end
 
     assign data_WB = bubble_ff ? data_WB_old :
-                                 (flush_ff ? 32'b0 : dealt_wb_data);
+                                 (flush_ff ? 32'b0 : 
+                                             (wb_select_old ? data_WB_raw :
+                                                          addr_old));
+
+
+
 
 
 
