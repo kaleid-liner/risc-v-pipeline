@@ -302,7 +302,7 @@ module RV32ICore(
         .clk(CPU_CLK),
         .bubbleM(bubbleM),
         .flushM(flushM),
-        .reg2_EX(reg2_EX),
+        .reg2_EX(dealt_reg2),
         .reg2_MEM(reg2_MEM)
     );
 
@@ -414,4 +414,3 @@ module RV32ICore(
     );  
     	         
 endmodule
-
