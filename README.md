@@ -79,6 +79,7 @@ Computer Architecture 2020 Lab
 * 2020.3.9 发布实验一
 * 2020.3.15 修正了Design Figure的PCE + 4问题（原图计算jarl和jal的链接地址，使用的是PC+8）
 * 2020.3.23 发布实验二，修正了Design Figure的一些问题。大家请根据最新的Design Figure完成实验（新的Design Figure不影响实验一评分）
+* 2020.3.26 修正了实验二的一些问题。大家请根据最新的代码框架完成实验
 
 
 ## 致谢
