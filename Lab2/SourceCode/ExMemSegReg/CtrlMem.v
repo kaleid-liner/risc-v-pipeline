@@ -47,9 +47,9 @@ module Ctrl_MEM(
     initial 
     begin
         wb_select_MEM = 0;
-        load_type_MEM = 2'h0;
+        load_type_MEM = 3'h0;
         reg_write_en_MEM = 0;
-        cache_write_en_MEM = 3'h0;
+        cache_write_en_MEM = 4'h0;
     end
     
     always@(posedge clk)
@@ -58,9 +58,9 @@ module Ctrl_MEM(
             if (flushM)
             begin
                 wb_select_MEM <= 0;
-                load_type_MEM <= 2'h0;
+                load_type_MEM <= 3'h0;
                 reg_write_en_MEM <= 0;
-                cache_write_en_MEM <= 3'h0;
+                cache_write_en_MEM <= 4'h0;
             end
             else
             begin
