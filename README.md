@@ -45,19 +45,19 @@ Computer Architecture 2020 Lab
 * **2020.3.9 Release Lab1**  
   请提交CPU设计报告 截止日期：2020.3.23  
   提交至BB平台  
-  提交格式：参"考http://home.ustc.edu.cn/~hyf15/experiments"。要求包括一份**pdf格式**实验报告（如果无法打开会影响最终成绩）  
+  提交格式：参考[格式要求](http://home.ustc.edu.cn/~hyf15/experiments)。要求包括一份**pdf格式**实验报告（如果无法打开会影响最终成绩）  
   提交版本号，从0开始，以最大版本提交文件为准  
 
 * **2020.3.23 Release Lab2**  
   请完成实验，并在检查后一周内提交实验报告 截止日期：参考课程群通知
   实验报告提交至BB平台  
-  提交格式：参考"http://home.ustc.edu.cn/~hyf15/experiments"。要求包括一份**pdf格式**实验报告和实验源码（如果无法打开会影响最终成绩）  
+  提交格式：参考[格式要求](http://home.ustc.edu.cn/~hyf15/experiments)。要求包括一份**pdf格式**实验报告和实验源码（如果无法打开会影响最终成绩）  
   提交版本号，从0开始，以最大版本提交文件为准  
 
 * **2020.4.20 Release Lab3**  
   请完成实验，并在检查后一周内提交实验报告 截止日期：参考课程群通知
   实验报告提交至BB平台  
-  提交格式：参考"http://home.ustc.edu.cn/~hyf15/experiments"。要求包括一份**pdf格式**实验报告和实验源码（如果无法打开会影响最终成绩）  
+  提交格式：参考[格式要求](http://home.ustc.edu.cn/~hyf15/experiments)。要求包括一份**pdf格式**实验报告和实验源码（如果无法打开会影响最终成绩）  
   提交版本号，从0开始，以最大版本提交文件为准  
 
 ## 实验课安排
