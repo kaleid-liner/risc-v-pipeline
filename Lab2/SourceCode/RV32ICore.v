@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: RV32I Core
 // Tool Versions: Vivado 2017.4.1
@@ -12,7 +12,7 @@
 
 //功能说明
     // RV32I Core的顶层模块
-//实验要求  
+//实验要求
     // 添加CSR指令的数据通路和相应部件
 
 module RV32ICore(
@@ -380,6 +380,16 @@ module RV32ICore(
     // ---------------------------------------------
     // Harzard Unit
     // ---------------------------------------------
+    reg [1:0] debug_hazard_cnt;
+    wire debug_flushD;
+    always @(posedge CPU_CLK) begin
+        debug_hazard_cnt <= debug_hazard_cnt + 1;
+    end
+    initial begin
+        debug_hazard_cnt = 0;
+    end
+    assign bubbleF = debug_hazard_cnt[0] | debug_hazard_cnt[1];
+    assign flushD = bubbleF | debug_flushD;
     HarzardUnit HarzardUnit1(
         .rst(CPU_RST),
         .reg1_srcD(inst_ID[19:15]),
@@ -399,8 +409,8 @@ module RV32ICore(
         .alu_src1(alu_src1_EX),
         .alu_src2(alu_src2_EX),
         .flushF(flushF),
-        .bubbleF(bubbleF),
-        .flushD(flushD),
+        .bubbleF(),
+        .flushD(debug_flushD),
         .bubbleD(bubbleD),
         .flushE(flushE),
         .bubbleE(bubbleE),
@@ -411,6 +421,6 @@ module RV32ICore(
         .op1_sel(op1_sel),
         .op2_sel(op2_sel),
         .reg2_sel(reg2_sel)
-    );  
-    	         
+    );
+
 endmodule

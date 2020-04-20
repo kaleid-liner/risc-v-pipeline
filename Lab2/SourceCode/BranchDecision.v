@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Branch Decision
 // Tool Versions: Vivado 2017.4.1
 // Description: Decide whether to branch
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -22,7 +22,7 @@
 // 实验要求
     // 补全模块
 
-`include "Parameters.v"   
+`include "Parameters.v"
 module BranchDecision(
     input wire [31:0] reg1, reg2,
     input wire [2:0] br_type,
@@ -30,5 +30,18 @@ module BranchDecision(
     );
 
     // TODO: Complete this module
+
+    always @(*) begin
+        case (br_type)
+            `NOBRANCH: br = 0;
+            `BEQ     : br = reg1 == reg2;
+            `BNE     : br = reg1 != reg2;
+            `BLT     : br = (reg1 < reg2) | (reg1[31] & ~reg2[31]);
+            `BLTU    : br = reg1 < reg2;
+            `BGE     : br = (reg1 > reg2) | (~reg1[31] & reg2[31]);
+            `BGEU    : br = reg1 > reg2;
+            default  : br = 0;
+        endcase
+    end
 
 endmodule

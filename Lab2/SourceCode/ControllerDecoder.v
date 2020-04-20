@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Controller Decoder
 // Tool Versions: Vivado 2017.4.1
 // Description: Controller Decoder Module
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 //  功能说明
@@ -33,7 +33,7 @@
     // 补全模块
 
 
-`include "Parameters.v"   
+`include "Parameters.v"
 module ControllerDecoder(
     input wire [31:0] inst,
     output wire jal,
@@ -53,5 +53,134 @@ module ControllerDecoder(
     );
 
     // TODO: Complete this module
+
+    wire [6:0] opcode;
+    wire [2:0] funct3;
+    wire [6:0] funct7;
+    
+    assign opcode = inst[6:0];
+    assign funct3 = inst[14:12];
+    assign funct7 = inst[31:25];
+
+    assign jal = opcode == `OP_JAL;
+    assign jalr = opcode == `OP_JALR;
+    assign op2_src = imm_type == `RTYPE ? 0 : 1;
+    assign load_npc = opcode == `OP_JAL || opcode == `OP_JALR;
+    assign wb_select = opcode == `OP_LOAD;
+    assign alu_src1 = opcode == `OP_AUIPC;
+    assign alu_src2 = opcode == `OP_IMM ? 2'b10
+                                        : 2'b00;
+
+    always @(*) begin
+        if (opcode == `OP_AUIPC || opcode == `OP_STORE || opcode == `OP_LOAD)
+            ALU_func = `ADD;
+        else if (opcode == `OP_LUI)
+            ALU_func = `LUI;
+        else begin
+            case (funct3)
+                3'b000 : ALU_func = opcode[5] & inst[30] ? `SUB : `ADD;
+                3'b001 : ALU_func = `SLL;
+                3'b010 : ALU_func = `SLT;
+                3'b011 : ALU_func = `SLTU;
+                3'b100 : ALU_func = `XOR;
+                3'b101 : ALU_func = inst[30] ? `SRA : `SRL;
+                3'b110 : ALU_func = `OR;
+                3'b111 : ALU_func = `AND;
+            endcase
+        end
+    end
+
+    always @(*) begin
+        if (opcode == `OP_BR) begin
+            case (funct3)
+                3'b000 : br_type = `BEQ;
+                3'b001 : br_type = `BNE;
+                3'b100 : br_type = `BLT;
+                3'b101 : br_type = `BGE;
+                3'b110 : br_type = `BLTU;
+                3'b111 : br_type = `BGEU;
+                default: br_type = `NOBRANCH;
+            endcase
+        end else
+            br_type = `NOBRANCH;
+    end
+
+    always @(*) begin
+        case (funct3)
+            3'b000 : load_type = `LB;
+            3'b001 : load_type = `LH;
+            3'b010 : load_type = `LW;
+            3'b100 : load_type = `LBU;
+            3'b101 : load_type = `LHU;
+            default: load_type = `NOREGWRITE;
+        endcase
+    end
+
+    always @(*) begin
+        if (opcode == `OP_STORE)
+            case (funct3)
+                3'b000 : cache_write_en = 4'b0001;
+                3'b001 : cache_write_en = 4'b0011;
+                3'b010 : cache_write_en = 4'b1111;
+                default: cache_write_en = 4'b0000;
+            endcase
+        else
+            cache_write_en = 0;
+    end
+
+    always @(*) begin
+        case (opcode)
+            `OP_LUI    : begin
+                imm_type = `UTYPE;
+                src_reg_en = 2'b00;
+                reg_write_en = 1;
+            end
+            `OP_AUIPC  : begin
+                imm_type = `UTYPE;
+                src_reg_en = 2'b00;
+                reg_write_en = 1;
+            end
+            `OP_JAL    : begin
+                imm_type = `JTYPE;
+                src_reg_en = 2'b00;
+                reg_write_en = 1;
+            end
+            `OP_JALR   : begin
+                imm_type = `ITYPE;
+                src_reg_en = 2'b10;
+                reg_write_en = 1;
+            end
+            `OP_BR     : begin
+                imm_type = `BTYPE;
+                src_reg_en = 2'b11;
+                reg_write_en = 0;
+            end
+            `OP_LOAD   : begin
+                imm_type = `ITYPE;
+                src_reg_en = 2'b10;
+                reg_write_en = 1;
+            end
+            `OP_STORE  : begin
+                imm_type = `STYPE;
+                src_reg_en = 2'b11;
+                reg_write_en = 0;
+            end
+            `OP_IMM    : begin
+                imm_type = `ITYPE;
+                src_reg_en = 2'b10;
+                reg_write_en = 1;
+            end
+            `OP_ALU    : begin
+                imm_type = `RTYPE;
+                src_reg_en = 2'b11;
+                reg_write_en = 1;
+            end
+            default    : begin
+                imm_type = `RTYPE;
+                src_reg_en = 2'b00;
+                reg_write_en = 0;
+            end
+        endcase
+    end
 
 endmodule

@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: ALU
 // Tool Versions: Vivado 2017.4.1
 // Description: Arithmetic and logic computation module
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 //  功能说明
@@ -21,7 +21,7 @@
 // 实验要求
     // 补全模块
 
-`include "Parameters.v"   
+`include "Parameters.v"
 module ALU(
     input wire [31:0] op1,
     input wire [31:0] op2,
@@ -30,6 +30,25 @@ module ALU(
     );
 
     // TODO: Complete this module
+    wire signed [31:0] signed_op1;
+    assign signed_op1 = op1;
+
+    always @(*) begin
+        case (ALU_func)
+            `SLL   : ALU_out = op1 << op2[4:0];
+            `SRL   : ALU_out = op1 >> op2[4:0];
+            `SRA   : ALU_out = signed_op1 >>> op2[4:0];
+            `ADD   : ALU_out = op1 + op2;
+            `SUB   : ALU_out = op1 - op2;
+            `XOR   : ALU_out = op1 ^ op2;
+            `OR    : ALU_out = op1 | op2;
+            `AND   : ALU_out = op1 & op2;
+            `SLT   : ALU_out = (op1 < op2) | (op1[31] & ~op2[31]);
+            `SLTU  : ALU_out = op1 < op2;
+            `LUI   : ALU_out = op2;
+            default: ALU_out = 0;
+        endcase
+    end
 
 endmodule
 

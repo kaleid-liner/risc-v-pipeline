@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Hazard Module
 // Tool Versions: Vivado 2017.4.1
 // Description: Hazard Module is used to control flush, bubble and bypass
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 //  功能说明
@@ -63,5 +63,35 @@ module HarzardUnit(
     );
 
     // TODO: Complete this module
+
+    always @(*) begin
+        if (rst) begin
+            flushF = 1;
+            flushD = 1;
+            flushE = 1;
+            flushM = 1;
+            flushW = 1;
+        end else begin
+            flushF = 0;
+            flushD = 0;
+            flushE = 0;
+            flushM = 0;
+            flushW = 0;
+        end
+        bubbleF = 0;
+        bubbleD = 0;
+        bubbleE = 0;
+        bubbleM = 0;
+        bubbleW = 0;
+
+        op1_sel = alu_src1 ? 2'b10 : 2'b11;
+        case (alu_src2)
+            2'b00: op2_sel = 2'b11;
+            2'b01: op2_sel = 2'b10;
+            2'b10: op2_sel = 2'b11;
+            default: op2_sel = 2'b11;
+        endcase
+        reg2_sel = 2'b10;
+    end
 
 endmodule

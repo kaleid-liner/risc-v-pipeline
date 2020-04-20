@@ -2,17 +2,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Parameters
 // Tool Versions: Vivado 2017.4.1
 // Description: Const Parameters
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 // 功能说明
     // 为了代码可读性，定义了常量值
-// 实验要求  
+// 实验要求
     // 无需修改
 
 `ifndef CONST_VALUES
@@ -43,7 +43,7 @@
     `define STYPE  3'd2
     `define BTYPE  3'd3
     `define UTYPE  3'd4
-    `define JTYPE  3'd5  
+    `define JTYPE  3'd5
 // load_type[2:0]  six kind of ways to save values to Register
     `define NOREGWRITE  3'b0	//	Do not write Register
     `define LB  3'd1			//	load 8bit from Mem then signed extended to 32bit
@@ -51,5 +51,16 @@
     `define LW  3'd3			//	write 32bit to Register
     `define LBU  3'd4			//	load 8bit from Mem then unsigned extended to 32bit
     `define LHU  3'd5			//	load 16bit from Mem then unsigned extended to 32bit
+// opcode
+    `define OP_JAL 7'b1101111
+    `define OP_JALR 7'b1100111
+    `define OP_AUIPC 7'b0010111
+    `define OP_LOAD 7'b0000011
+    `define OP_STORE 7'b0100011
+    `define OP_LUI 7'b0110111
+    `define OP_IMM 7'b0010011
+    `define OP_ALU 7'b0110011
+    `define OP_BR 7'b1100011
+
 `endif
 

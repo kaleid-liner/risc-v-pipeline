@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: NPC Generator
 // Tool Versions: Vivado 2017.4.1
 // Description: RV32I Next PC Generator
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -24,7 +24,7 @@
     // br                br == 1时，有br跳转
 // 输出
     // NPC               下一条执行的指令地址
-// 实验要求  
+// 实验要求
     // 实现NPC_Generator
 
 module NPC_Generator(
@@ -34,5 +34,16 @@ module NPC_Generator(
     );
 
     // TODO: Complete this module
+
+    always @(*) begin
+        if (jalr)
+            NPC = jalr_target;
+        else if (br)
+            NPC = br_target;
+        else if (jal)
+            NPC = jal_target;
+        else
+            NPC = PC;
+    end
 
 endmodule
