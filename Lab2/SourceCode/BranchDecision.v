@@ -36,10 +36,10 @@ module BranchDecision(
             `NOBRANCH: br = 0;
             `BEQ     : br = reg1 == reg2;
             `BNE     : br = reg1 != reg2;
-            `BLT     : br = (reg1 < reg2) | (reg1[31] & ~reg2[31]);
+            `BLT     : br = ((reg1 < reg2) & (reg1[31] | ~reg2[31])) | (reg1[31] & ~reg2[31]);
             `BLTU    : br = reg1 < reg2;
-            `BGE     : br = (reg1 > reg2) | (~reg1[31] & reg2[31]);
-            `BGEU    : br = reg1 > reg2;
+            `BGE     : br = ((reg1 >= reg2) & (~reg1[31] | reg2[31])) | (~reg1[31] & reg2[31]);
+            `BGEU    : br = reg1 >= reg2;
             default  : br = 0;
         endcase
     end

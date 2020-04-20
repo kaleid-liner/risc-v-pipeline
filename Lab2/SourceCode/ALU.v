@@ -43,7 +43,7 @@ module ALU(
             `XOR   : ALU_out = op1 ^ op2;
             `OR    : ALU_out = op1 | op2;
             `AND   : ALU_out = op1 & op2;
-            `SLT   : ALU_out = (op1 < op2) | (op1[31] & ~op2[31]);
+            `SLT   : ALU_out = ((op1 < op2) & (op1[31] | ~op2[31])) | (op1[31] & ~op2[31]);
             `SLTU  : ALU_out = op1 < op2;
             `LUI   : ALU_out = op2;
             default: ALU_out = 0;
