@@ -66,7 +66,7 @@ module Ctrl_EX(
     output reg load_npc_EX,
     output reg wb_select_EX,
     output reg [2:0] load_type_EX,
-    output reg [2:0] src_reg_en_EX,
+    output reg [1:0] src_reg_en_EX,
     output reg reg_write_en_EX,
     output reg [3:0] cache_write_en_EX,
     output reg alu_src1_EX,
