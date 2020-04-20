@@ -57,7 +57,7 @@ module ControllerDecoder(
     wire [6:0] opcode;
     wire [2:0] funct3;
     wire [6:0] funct7;
-    
+
     assign opcode = inst[6:0];
     assign funct3 = inst[14:12];
     assign funct7 = inst[31:25];
@@ -76,6 +76,8 @@ module ControllerDecoder(
             ALU_func = `ADD;
         else if (opcode == `OP_LUI)
             ALU_func = `LUI;
+        else if (opcode == `OP_JALR)
+            ALU_func = `ADD;
         else begin
             case (funct3)
                 3'b000 : ALU_func = opcode[5] & inst[30] ? `SUB : `ADD;
