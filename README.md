@@ -70,7 +70,7 @@ Computer Architecture 2020 Lab
 
 **Lab2** （实验二代码仓库）
 
-**Lab3** （实验二代码仓库）
+**Lab3** （实验三代码仓库）
 
 **Design Figure** （RV32I Core设计图）
 
