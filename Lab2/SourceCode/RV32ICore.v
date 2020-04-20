@@ -380,16 +380,6 @@ module RV32ICore(
     // ---------------------------------------------
     // Harzard Unit
     // ---------------------------------------------
-    reg [1:0] debug_hazard_cnt;
-    wire debug_flushD;
-    always @(posedge CPU_CLK) begin
-        debug_hazard_cnt <= debug_hazard_cnt + 1;
-    end
-    initial begin
-        debug_hazard_cnt = 0;
-    end
-    assign bubbleF = debug_hazard_cnt[0] | debug_hazard_cnt[1];
-    assign flushD = bubbleF | debug_flushD;
     HarzardUnit HarzardUnit1(
         .rst(CPU_RST),
         .reg1_srcD(inst_ID[19:15]),
@@ -403,14 +393,14 @@ module RV32ICore(
         .jalr(jalr_EX),
         .jal(jal),
         .src_reg_en(src_reg_en_EX),
-        .wb_select(wb_select_EX),
+        .wb_select(wb_select_MEM),
         .reg_write_en_MEM(reg_write_en_MEM),
         .reg_write_en_WB(reg_write_en_WB),
         .alu_src1(alu_src1_EX),
         .alu_src2(alu_src2_EX),
         .flushF(flushF),
-        .bubbleF(),
-        .flushD(debug_flushD),
+        .bubbleF(bubbleF),
+        .flushD(flushD),
         .bubbleD(bubbleD),
         .flushE(flushE),
         .bubbleE(bubbleE),

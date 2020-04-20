@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-//
+// 
 // Design Name: RV32I Core
 // Module Name: Write-back Data seg reg
 // Tool Versions: Vivado 2017.4.1
 // Description: Write-back data seg reg for MEM\WB
-//
+// 
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -29,7 +29,7 @@
 // 输出
     // debug_out_data    Data Cache的debug读出数据
     // data_WB           传给下一流水段的写回寄存器内容
-// 实验要求
+// 实验要求  
     // 无需修改
 
 module WB_Data_WB(
@@ -74,6 +74,8 @@ module WB_Data_WB(
     // else if chip clear, output 0
     // else output values from cache
 
+    reg bubble_ff = 1'b0;
+    reg flush_ff = 1'b0;
     reg wb_select_old = 0;
     reg [31:0] data_WB_old = 32'b0;
     reg [31:0] addr_old;
@@ -88,14 +90,16 @@ module WB_Data_WB(
 
     always@(posedge clk)
     begin
+        bubble_ff <= bubbleW;
+        flush_ff <= flushW;
         data_WB_old <= data_WB;
         addr_old <= addr;
         wb_select_old <= wb_select;
         load_type_old <= load_type;
     end
 
-    assign data_WB = bubbleW ? data_WB_old :
-                                 (flushW ? 32'b0 :
+    assign data_WB = bubble_ff ? data_WB_old :
+                                 (flush_ff ? 32'b0 : 
                                              (wb_select_old ? data_WB_raw :
                                                           addr_old));
 
@@ -104,5 +108,5 @@ module WB_Data_WB(
 
 
 
-
+    
 endmodule

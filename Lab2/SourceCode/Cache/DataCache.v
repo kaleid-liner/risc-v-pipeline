@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-//
+// 
 // Design Name: RV32I Core
 // Module Name: Data Cache
 // Tool Versions: Vivado 2017.4.1
 // Description: RV32I Data Cache
-//
+// 
 //////////////////////////////////////////////////////////////////////////////////
 
 // 功能说明
@@ -26,7 +26,7 @@
 // 输出
     // douta             a口读数据
     // doutb             b口读数据
-// 实验要求
+// 实验要求  
     // 无需修改
 
 
@@ -55,13 +55,10 @@ module DataCache(
         // ......
     end
 
-    always @(*) begin
-        out_data <= addr_valid ? data_cache[dealt_addr] : 32'h0;
-        debug_out_data <= debug_addr_valid ? data_cache[dealt_debug_addr] : 32'h0;
-    end
-
     always@(posedge clk)
     begin
+        out_data <= addr_valid ? data_cache[dealt_addr] : 32'h0;
+        debug_out_data <= debug_addr_valid ? data_cache[dealt_debug_addr] : 32'h0;
         // write data in bytes
         if (write_en[0] & addr_valid)
             data_cache[dealt_addr][7: 0] <= in_data[7:0];

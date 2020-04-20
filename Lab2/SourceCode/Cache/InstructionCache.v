@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-//
+// 
 // Design Name: RV32I Core
 // Module Name: Instruction Cache
 // Tool Versions: Vivado 2017.4.1
 // Description: RV32I Instruction Cache
-//
+// 
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -23,7 +23,7 @@
 // 输出
     // data              读的指令
     // debug_data        debug读的指令
-// 实验要求
+// 实验要求  
     // 无需修改
 
 module InstructionCache(
@@ -51,14 +51,11 @@ module InstructionCache(
         // ......
     end
 
-    always @(*) begin
-        data = addr_valid ? inst_cache[dealt_addr] : 32'h0;
-        debug_data = debug_addr_valid ? inst_cache[dealt_debug_addr] : 32'h0;
-    end
-
     always@(posedge clk)
     begin
-        if(write_en & debug_addr_valid)
+        data <= addr_valid ? inst_cache[dealt_addr] : 32'h0;
+        debug_data <= debug_addr_valid ? inst_cache[dealt_debug_addr] : 32'h0;
+        if(write_en & debug_addr_valid) 
             inst_cache[dealt_debug_addr] <= debug_input;
     end
 
