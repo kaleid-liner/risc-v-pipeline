@@ -64,7 +64,7 @@ module RV32ICore(
     wire csr_write_en_ID, csr_write_en_EX;
     wire csr_read_en_ID, csr_read_en_EX;
     wire load_csr_ID, load_csr_EX;
-    wire csr_src;
+    wire csr_src_ID, csr_src_EX;
     wire [31:0] csr_in_data;
     wire [31:0] csr_out_data;
 
@@ -96,7 +96,7 @@ module RV32ICore(
     assign result = load_csr_EX ? csr_out_data :
                                   load_npc_EX ? PC_EX : ALU_out;
 
-    assign csr_in_data = csr_src ? {27'd0, reg1_src_EX} : ALU_op1;
+    assign csr_in_data = csr_src_EX ? {27'd0, reg1_src_EX} : ALU_op1;
 
 
     //Module connections
@@ -192,7 +192,7 @@ module RV32ICore(
         .csr_write_en(csr_write_en_ID),
         .csr_read_en(csr_read_en_ID),
         .load_csr(load_csr_ID),
-        .csr_src(csr_src)
+        .csr_src(csr_src_ID)
     );
 
     ImmExtend ImmExtend1(
@@ -276,6 +276,7 @@ module RV32ICore(
         .csr_write_en_ID(csr_write_en_ID),
         .csr_read_en_ID(csr_read_en_ID),
         .load_csr_ID(load_csr_ID),
+        .csr_src_ID(csr_src_ID),
         .ALU_func_EX(ALU_func_EX),
         .br_type_EX(br_type_EX),
         .load_npc_EX(load_npc_EX),
@@ -289,7 +290,8 @@ module RV32ICore(
         .csr_op_EX(csr_op_EX),
         .csr_write_en_EX(csr_write_en_EX),
         .csr_read_en_EX(csr_read_en_EX),
-        .load_csr_EX(load_csr_EX)
+        .load_csr_EX(load_csr_EX),
+        .csr_src_EX(csr_src_EX)
     );
 
 

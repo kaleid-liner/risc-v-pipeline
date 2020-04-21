@@ -24,25 +24,24 @@ module ControlStatusRegister (
     wire [4:0] dealt_addr = addr[4:0];
     reg [31:0] dealt_data;
 
+    // As there ain't any side effects, so I didn't consider read_en
     assign out_data = reg_file[dealt_addr];
 
     always @(*) begin
         case (op)
             `CSRRW : dealt_data = in_data;
-            `CSRRC : dealt_data = in_data ^ out_data;
+            `CSRRC : dealt_data = out_data & ~in_data;
             `CSRRS : dealt_data = in_data | out_data;
             default: dealt_data = in_data;
         endcase
     end
 
-    always @(negedge clk or posedge rst) begin
+    always @(posedge clk or posedge rst) begin
         if (rst)
             for (i = 0; i < 32; i = i + 1)
                 reg_file[i][31:0] <= 32'b0;
         else if (write_en)
             reg_file[dealt_addr] <= dealt_data;
     end
-
-    // As there ain't any side effects, so I didn't consider read_en
 
 endmodule

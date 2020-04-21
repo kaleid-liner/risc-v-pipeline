@@ -67,7 +67,7 @@ module ControllerDecoder(
     wire [6:0] opcode;
     wire [2:0] funct3;
     wire [6:0] funct7;
-    wire [4:0] rd;
+    wire [4:0] rd, rs1;
 
     assign opcode = inst[6:0];
     assign funct3 = inst[14:12];
