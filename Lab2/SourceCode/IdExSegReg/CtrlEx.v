@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Control Signal Seg Reg
 // Tool Versions: Vivado 2017.4.1
 // Description: Control signal seg reg for ID\EX
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -41,7 +41,7 @@
     // alu_src1_EX          传给下一流水段的alu操作数1来源
     // alu_src2_EX          传给下一流水段的alu操作数2来源
 
-// 实验要求  
+// 实验要求
     // 无需修改
 
 
@@ -60,6 +60,10 @@ module Ctrl_EX(
     input wire [3:0] cache_write_en_ID,
     input wire alu_src1_ID,
     input wire [1:0] alu_src2_ID,
+    input wire [1:0] csr_op_ID,
+    input wire csr_write_en_ID,
+    input wire csr_read_en_ID,
+    input wire load_csr_ID,
     output reg jalr_EX,
     output reg [3:0] ALU_func_EX,
     output reg [2:0] br_type_EX,
@@ -70,10 +74,14 @@ module Ctrl_EX(
     output reg reg_write_en_EX,
     output reg [3:0] cache_write_en_EX,
     output reg alu_src1_EX,
-    output reg [1:0] alu_src2_EX
+    output reg [1:0] alu_src2_EX,
+    output reg [1:0] csr_op_EX,
+    output reg csr_write_en_EX,
+    output reg csr_read_en_EX,
+    output reg load_csr_EX
     );
 
-    initial 
+    initial
     begin
         jalr_EX = 0;
         ALU_func_EX = 4'h0;
@@ -86,10 +94,14 @@ module Ctrl_EX(
         cache_write_en_EX = 3'h0;
         alu_src1_EX = 0;
         alu_src2_EX = 2'b0;
+        csr_op_EX = 2'b0;
+        csr_write_en_EX = 0;
+        csr_read_en_EX = 0;
+        load_csr_EX = 0;
     end
-    
+
     always@(posedge clk)
-        if (!bubbleE) 
+        if (!bubbleE)
         begin
             if (flushE)
             begin
@@ -104,6 +116,10 @@ module Ctrl_EX(
                 cache_write_en_EX <= 3'h0;
                 alu_src1_EX <= 0;
                 alu_src2_EX <= 2'b0;
+                csr_op_EX <= 2'b0;
+                csr_write_en_EX <= 0;
+                csr_read_en_EX <= 0;
+                load_csr_EX <= 0;
             end
             else
             begin
@@ -118,7 +134,11 @@ module Ctrl_EX(
                 cache_write_en_EX <= cache_write_en_ID;
                 alu_src1_EX <= alu_src1_ID;
                 alu_src2_EX <= alu_src2_ID;
+                csr_op_EX <= csr_op_ID;
+                csr_write_en_EX <= csr_write_en_ID;
+                csr_read_en_EX <= csr_read_en_ID;
+                load_csr_EX <= load_csr_ID;
             end
         end
-    
+
 endmodule

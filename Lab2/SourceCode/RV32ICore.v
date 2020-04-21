@@ -59,7 +59,14 @@ module RV32ICore(
     wire [31:0] dealt_reg2;
     wire [31:0] result, result_MEM;
     wire [1:0] op1_sel, op2_sel, reg2_sel;
-
+    // csr
+    wire [1:0] csr_op_ID, csr_op_EX;
+    wire csr_write_en_ID, csr_write_en_EX;
+    wire csr_read_en_ID, csr_read_en_EX;
+    wire load_csr_ID, load_csr_EX;
+    wire csr_src;
+    wire [31:0] csr_in_data;
+    wire [31:0] csr_out_data;
 
 
 
@@ -86,8 +93,10 @@ module RV32ICore(
 
 
     // MUX for result (ALU or PC_EX)
-    assign result = load_npc_EX ? PC_EX : ALU_out;
+    assign result = load_csr_EX ? csr_out_data :
+                                  load_npc_EX ? PC_EX : ALU_out;
 
+    assign csr_in_data = csr_src ? {27'd0, reg1_src_EX} : ALU_op1;
 
 
     //Module connections
@@ -178,7 +187,12 @@ module RV32ICore(
         .cache_write_en(cache_write_en_ID),
         .alu_src1(alu_src1_ID),
         .alu_src2(alu_src2_ID),
-        .imm_type(imm_type)
+        .imm_type(imm_type),
+        .csr_op(csr_op_ID),
+        .csr_write_en(csr_write_en_ID),
+        .csr_read_en(csr_read_en_ID),
+        .load_csr(load_csr_ID),
+        .csr_src(csr_src)
     );
 
     ImmExtend ImmExtend1(
@@ -258,6 +272,10 @@ module RV32ICore(
         .alu_src1_ID(alu_src1_ID),
         .alu_src2_ID(alu_src2_ID),
         .jalr_EX(jalr_EX),
+        .csr_op_ID(csr_op_ID),
+        .csr_write_en_ID(csr_write_en_ID),
+        .csr_read_en_ID(csr_read_en_ID),
+        .load_csr_ID(load_csr_ID),
         .ALU_func_EX(ALU_func_EX),
         .br_type_EX(br_type_EX),
         .load_npc_EX(load_npc_EX),
@@ -267,7 +285,11 @@ module RV32ICore(
         .reg_write_en_EX(reg_write_en_EX),
         .cache_write_en_EX(cache_write_en_EX),
         .alu_src1_EX(alu_src1_EX),
-        .alu_src2_EX(alu_src2_EX)
+        .alu_src2_EX(alu_src2_EX),
+        .csr_op_EX(csr_op_EX),
+        .csr_write_en_EX(csr_write_en_EX),
+        .csr_read_en_EX(csr_read_en_EX),
+        .load_csr_EX(load_csr_EX)
     );
 
 
@@ -330,6 +352,16 @@ module RV32ICore(
         .cache_write_en_MEM(cache_write_en_MEM)
     );
 
+    ControlStatusRegister ControlStatusRegister1 (
+        .clk(CPU_CLK),
+        .rst(CPU_RST),
+        .in_data(csr_in_data),
+        .addr(reg_or_imm),
+        .write_en(csr_write_en_EX),
+        .read_en(csr_read_en_EX),
+        .op(csr_op_EX),
+        .out_data(csr_out_data)
+    );
 
 
     // ---------------------------------------------

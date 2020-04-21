@@ -61,6 +61,11 @@
     `define OP_IMM 7'b0010011
     `define OP_ALU 7'b0110011
     `define OP_BR 7'b1100011
+    `define OP_CSR 7'b1110011
+// csr_op[1:0]
+    `define CSRRW 2'd0
+    `define CSRRS 2'd1
+    `define CSRRC 2'd2
 
 `endif
 

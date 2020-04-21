@@ -29,6 +29,11 @@
     // imm_type          指令中立即数类型
     // alu_src1          alu操作数1来源，alu_src1 == 0表示来自reg1，alu_src1 == 1表示来自PC
     // alu_src2          alu操作数2来源，alu_src2 == 2’b00表示来自reg2，alu_src2 == 2'b01表示来自reg2地址，alu_src2 == 2'b10表示来自立即数
+    // csr_op            csr 操作类型
+    // csr_write_en      csr 写使能
+    // csr_read_en       csr 读使能
+    // load_csr          写回寄存器的值的来源 (CSR 或者 ALU 计算结果），load_csr == 1 时选择 CSR
+    // csr_src           csr 数据来源，csr_src == 0 表示来自 reg1，csr_src == 1 表示来自 zimm
 // 实验要求
     // 补全模块
 
@@ -49,7 +54,12 @@ module ControllerDecoder(
     output reg [3:0] cache_write_en,
     output wire alu_src1,
     output wire [1:0] alu_src2,
-    output reg [2:0] imm_type
+    output reg [2:0] imm_type,
+    output reg [1:0] csr_op,
+    output wire csr_write_en,
+    output wire csr_read_en,
+    output wire load_csr,
+    output wire csr_src
     );
 
     // TODO: Complete this module
@@ -57,10 +67,13 @@ module ControllerDecoder(
     wire [6:0] opcode;
     wire [2:0] funct3;
     wire [6:0] funct7;
+    wire [4:0] rd;
 
     assign opcode = inst[6:0];
     assign funct3 = inst[14:12];
     assign funct7 = inst[31:25];
+    assign rd = inst[11:7];
+    assign rs1 = inst[19:15];
 
     assign jal = opcode == `OP_JAL;
     assign jalr = opcode == `OP_JALR;
@@ -69,6 +82,18 @@ module ControllerDecoder(
     assign wb_select = opcode == `OP_LOAD;
     assign alu_src1 = opcode == `OP_AUIPC;
     assign alu_src2 = op2_src ? 2'b10 : 2'b00;
+
+    assign csr_src = funct3[2];
+    assign load_csr = opcode == `OP_CSR;
+    assign csr_write_en = opcode == `OP_CSR && (rs1 != 5'd0 || funct3[1:0] == 2'b01);
+    assign csr_read_en = opcode == `OP_CSR && rd != 5'd0;
+    always @(*) begin
+        case (funct3)
+            3'b001, 3'b101 : csr_op = `CSRRW;
+            3'b010, 3'b110 : csr_op = `CSRRS;
+            3'b011, 3'b111 : csr_op = `CSRRC;
+        endcase
+    end
 
     always @(*) begin
         if (opcode == `OP_AUIPC || opcode == `OP_STORE || opcode == `OP_LOAD)
@@ -174,6 +199,11 @@ module ControllerDecoder(
             `OP_ALU    : begin
                 imm_type = `RTYPE;
                 src_reg_en = 2'b11;
+                reg_write_en = 1;
+            end
+            `OP_CSR    : begin
+                imm_type = `ITYPE;
+                src_reg_en = csr_src ? 2'b00 : 2'b10;
                 reg_write_en = 1;
             end
             default    : begin
