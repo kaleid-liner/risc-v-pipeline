@@ -64,20 +64,20 @@ module HarzardUnit(
 
     // TODO: Complete this module
 
-    reg reg1_flushE, reg1_bubbleF, reg1_bubbleD;
-    reg reg2_flushE, reg2_bubbleF, reg2_bubbleD;
+    reg reg1_flushM, reg1_bubbleE, reg1_bubbleF, reg1_bubbleD;
+    reg reg2_flushM, reg2_bubbleE, reg2_bubbleF, reg2_bubbleD;
     reg jump_flushD, jump_flushE;
 
     always @(*) begin
         flushF = rst;
         flushD = jump_flushD | rst;
-        flushE = reg1_flushE | reg2_flushE | jump_flushE | rst;
-        flushM = rst;
+        flushE = jump_flushE | rst;
+        flushM = reg1_flushM | reg2_flushM | rst;
         flushW = rst;
 
         bubbleF = reg1_bubbleF | reg2_bubbleF;
         bubbleD = reg1_bubbleD | reg2_bubbleD;
-        bubbleE = 0;
+        bubbleE = reg1_bubbleE | reg2_bubbleE;
         bubbleM = 0;
         bubbleW = 0;
     end
@@ -85,35 +85,34 @@ module HarzardUnit(
     always @(*) begin
         if (src_reg_en[0] && reg2_srcE != 5'b0 && reg_write_en_MEM && reg2_srcE == reg_dstM) begin
             if (!wb_select) begin
-                op2_sel = 2'b00;
+                op2_sel = alu_src2 == 2'b00 ? 2'b00 : 2'b11;
                 reg2_sel = 2'b00;
                 reg2_bubbleF = 0;
                 reg2_bubbleD = 0;
-                reg2_flushE = 0;
+                reg2_bubbleE = 0;
+                reg2_flushM = 0;
             end else begin
-                op2_sel = 2'b01;
+                op2_sel = alu_src2 == 2'b00 ? 2'b01 : 2'b11;
                 reg2_sel = 2'b01;
                 reg2_bubbleF = 1;
                 reg2_bubbleD = 1;
-                reg2_flushE = 1;
+                reg2_bubbleE = 1;
+                reg2_flushM = 1;
             end
         end else if (src_reg_en[0] && reg2_srcE != 5'b0 && reg_write_en_WB && reg2_srcE == reg_dstW) begin
-            op2_sel = 2'b01;
+            op2_sel = alu_src2 == 2'b00 ? 2'b01 : 2'b11;
             reg2_sel = 2'b01;
             reg2_bubbleF = 0;
             reg2_bubbleD = 0;
-            reg2_flushE = 0;
+            reg2_bubbleE = 0;
+            reg2_flushM = 0;
         end else begin
-            case (alu_src2)
-                2'b00: op2_sel = 2'b11;
-                2'b01: op2_sel = 2'b10;
-                2'b10: op2_sel = 2'b11;
-                default: op2_sel = 2'b11;
-            endcase
+            op2_sel = 2'b11;
             reg2_sel = 2'b11;
             reg2_bubbleF = 0;
             reg2_bubbleD = 0;
-            reg2_flushE = 0;
+            reg2_bubbleE = 0;
+            reg2_flushM = 0;
         end
 
         if (src_reg_en[1] && reg1_srcE != 5'b0) begin
@@ -122,29 +121,34 @@ module HarzardUnit(
                     op1_sel = 2'b00;
                     reg1_bubbleF = 0;
                     reg1_bubbleD = 0;
-                    reg1_flushE = 0;
+                    reg1_bubbleE = 0;
+                    reg1_flushM = 0;
                 end else begin
                     op1_sel = 2'b01;
                     reg1_bubbleF = 1;
                     reg1_bubbleD = 1;
-                    reg1_flushE = 1;
+                    reg1_bubbleE = 1;
+                    reg1_flushM = 1;
                 end
             end else if (reg_write_en_WB && reg1_srcE == reg_dstW) begin
                 op1_sel = 2'b01;
                 reg1_bubbleF = 0;
                 reg1_bubbleD = 0;
-                reg1_flushE = 0;
+                reg1_bubbleE = 0;
+                reg1_flushM = 0;
             end else begin
                 op1_sel = alu_src1 ? 2'b10 : 2'b11;
                 reg1_bubbleF = 0;
                 reg1_bubbleD = 0;
-                reg1_flushE = 0;
+                reg1_bubbleE = 0;
+                reg1_flushM = 0;
             end
         end else begin
             op1_sel = alu_src1 ? 2'b10 : 2'b11;
             reg1_bubbleF = 0;
             reg1_bubbleD = 0;
-            reg1_flushE = 0;
+            reg1_bubbleE = 0;
+            reg1_flushM = 0;
         end
     end
 
