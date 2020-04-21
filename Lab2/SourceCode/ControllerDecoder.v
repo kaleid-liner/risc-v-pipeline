@@ -68,8 +68,7 @@ module ControllerDecoder(
     assign load_npc = opcode == `OP_JAL || opcode == `OP_JALR;
     assign wb_select = opcode == `OP_LOAD;
     assign alu_src1 = opcode == `OP_AUIPC;
-    assign alu_src2 = opcode == `OP_IMM ? 2'b10
-                                        : 2'b00;
+    assign alu_src2 = op2_src ? 2'b10 : 2'b00;
 
     always @(*) begin
         if (opcode == `OP_AUIPC || opcode == `OP_STORE || opcode == `OP_LOAD)
