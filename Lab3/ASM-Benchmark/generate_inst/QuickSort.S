@@ -16,6 +16,15 @@ main:
     slli   a2, a2  , 2         # 准备函数参数，a2=数组最后一个元素的地址偏移。我们要排0x100=1024个数，最后一个数的地址为0x3fc
     
     jal    ra  , QuickSort     # 开始排序
+
+    addi   t0, a3, 0
+    addi   t1, a0, 0
+    slli   t0, t0, 2
+    slli   t1, t1, 2
+Loop:
+    lw     t2, (t1)
+    addi   t1, t1, 4
+    blt    t1, t0, Loop
 infinity_loop:
     jal   zero, infinity_loop  # 排序结束，死循环
 
