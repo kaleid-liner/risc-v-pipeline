@@ -48,6 +48,18 @@ _start:
     blt    t0, a3, MatMulLoopI
     
     # 计算结束，死循环
+
+
+    # 计算结束，死循环
+    add    t0, zero, 1
+    sll    t0, t0, a4
+    sll    t0, t0, a4
+    slli   t0, t0, 2
+    addi   t1, zero, 0
+Loop:
+    lw     t2, (t1)
+    addi   t1, t1, 4
+    blt    t1, t0, Loop
 InfLoop:
     jal    zero, InfLoop
     
