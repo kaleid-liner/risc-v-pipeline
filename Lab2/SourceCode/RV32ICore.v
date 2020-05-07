@@ -79,12 +79,12 @@ module RV32ICore(
     // MUX for ALU op1
     assign ALU_op1 = (op1_sel == 2'h0) ? result_MEM :
                                          ((op1_sel == 2'h1) ? data_WB :
-                                                              (op1_sel == 2'h2) ? (PC_EX - 4) :
+                                                              (op1_sel == 2'h2) ? (PC_EX - 4)
                                                                                   reg1_EX);
     // MUX for ALU op2
     assign ALU_op2 = (op2_sel == 2'h0) ? result_MEM :
                                          ((op2_sel == 2'h1) ? data_WB :
-                                                              ((op2_sel == 2'h2) ? reg2_src_EX :
+                                                              ((op2_sel == 2'h2) ? {27'h0, reg2_src_EX} :
                                                                                    reg_or_imm));
 
     // MUX for Reg2
