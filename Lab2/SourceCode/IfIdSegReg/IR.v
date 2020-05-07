@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Instruction Seg Reg
 // Tool Versions: Vivado 2017.4.1
 // Description: Instruction seg reg for IF\ID
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 //  功能说明
@@ -23,7 +23,7 @@
 // 输出
     // inst_ID           传给下一流水段的指令
     // debug_data        Instruction Cache的debug读出指令
-// 实验要求  
+// 实验要求
     // 无需修改
 
 
@@ -64,10 +64,11 @@ module IR_ID(
     begin
         bubble_ff <= bubbleD;
         flush_ff <= flushD;
-        inst_ID_old <= inst_ID_raw;
+        if (!bubble_ff)
+            inst_ID_old <= inst_ID_raw;
     end
 
     assign inst_ID = bubble_ff ? inst_ID_old : (flush_ff ? 32'b0 : inst_ID_raw);
 
-    
+
 endmodule
