@@ -281,3 +281,5 @@ TSWLatexianTemp*
 #*Notes.bib
 
 submit/
+
+~$*.docx
