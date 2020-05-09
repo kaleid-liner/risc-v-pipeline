@@ -58,6 +58,9 @@ module HarzardUnit(
     input wire reg_write_en_WB,
     input wire alu_src1,
     input wire [1:0] alu_src2,
+    input wire rd_req,
+    input wire wr_req,
+    input wire miss,
     output reg flushF, bubbleF, flushD, bubbleD, flushE, bubbleE, flushM, bubbleM, flushW, bubbleW,
     output reg [1:0] op1_sel, op2_sel, reg2_sel
     );
@@ -67,19 +70,36 @@ module HarzardUnit(
     reg reg1_flushM, reg1_bubbleE, reg1_bubbleF, reg1_bubbleD;
     reg reg2_flushM, reg2_bubbleE, reg2_bubbleF, reg2_bubbleD;
     reg jump_flushD, jump_flushE;
+    reg mem_flushW, mem_bubbleF, mem_bubbleD, mem_bubbleE, mem_bubbleM;
 
     always @(*) begin
         flushF = rst;
         flushD = jump_flushD | rst;
         flushE = jump_flushE | rst;
         flushM = reg1_flushM | reg2_flushM | rst;
-        flushW = rst;
+        flushW = rst | mem_flushW;
 
-        bubbleF = reg1_bubbleF | reg2_bubbleF;
-        bubbleD = reg1_bubbleD | reg2_bubbleD;
-        bubbleE = reg1_bubbleE | reg2_bubbleE;
-        bubbleM = 0;
+        bubbleF = reg1_bubbleF | reg2_bubbleF | mem_bubbleF;
+        bubbleD = reg1_bubbleD | reg2_bubbleD | mem_bubbleD;
+        bubbleE = reg1_bubbleE | reg2_bubbleE | mem_bubbleE;
+        bubbleM = mem_bubbleM;
         bubbleW = 0;
+    end
+
+    always @(*) begin
+        if ((rd_req | wr_reg) & miss) begin
+            mem_bubbleF = 1;
+            mem_bubbleD = 1;
+            mem_bubbleE = 1;
+            mem_bubbleM = 1;
+            mem_flushW = 1;
+        end else begin
+            mem_bubbleF = 0;
+            mem_bubbleD = 0;
+            mem_bubbleE = 0;
+            mem_bubbleM = 0;
+            mem_flushW = 0;
+        end
     end
 
     always @(*) begin

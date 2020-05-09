@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: RV32I Core
 // Module Name: Write-back Data seg reg
 // Tool Versions: Vivado 2017.4.1
 // Description: Write-back data seg reg for MEM\WB
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -29,7 +29,7 @@
 // 输出
     // debug_out_data    Data Cache的debug读出数据
     // data_WB           传给下一流水段的写回寄存器内容
-// 实验要求  
+// 实验要求
     // 无需修改
 
 module WB_Data_WB(
@@ -40,6 +40,10 @@ module WB_Data_WB(
     input  [31:0] addr,
     input  [31:0] debug_addr,
     input  [31:0] in_data, debug_in_data,
+    input rst,
+    input rd_req,
+    input wr_req,
+    output miss,
     output wire [31:0] debug_out_data,
     output wire [31:0] data_WB
     );
@@ -47,27 +51,16 @@ module WB_Data_WB(
     wire [31:0] data_raw;
     wire [31:0] data_WB_raw;
 
-
-
-    DataCache DataCache1(
+    cache DataCache1(
         .clk(clk),
-        .write_en(write_en << addr[1:0]),
-        .debug_write_en(debug_write_en),
-        .addr(addr[31:2]),
-        .debug_addr(debug_addr[31:2]),
-        .in_data(in_data << (8 * addr[1:0])),
-        .debug_in_data(debug_in_data),
-        .out_data(data_raw),
-        .debug_out_data(debug_out_data)
+        .rst(rst),
+        .miss(miss),
+        .addr(addr),
+        .rd_req(rd_req),
+        .rd_data(data_raw),
+        .wr_req(wr_req),
+        .wr_data(in_data << (8 * addr[1:0]))
     );
-
-
-
-
-
-
-
-
 
     // Add flush and bubble support
     // if chip not enabled, output output last read result
@@ -99,7 +92,7 @@ module WB_Data_WB(
     end
 
     assign data_WB = bubble_ff ? data_WB_old :
-                                 (flush_ff ? 32'b0 : 
+                                 (flush_ff ? 32'b0 :
                                              (wb_select_old ? data_WB_raw :
                                                           addr_old));
 
@@ -108,5 +101,5 @@ module WB_Data_WB(
 
 
 
-    
+
 endmodule

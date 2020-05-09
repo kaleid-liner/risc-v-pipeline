@@ -2,12 +2,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: USTC ESLAB
 // Engineer: Huang Yifan (hyf15@mail.ustc.edu.cn)
-// 
+//
 // Design Name: Ctrl_MEM
 // Module Name: Control Signal Seg Reg
 // Tool Versions: Vivado 2017.4.1
 // Description: Control signal seg reg for EX\MEM
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -27,7 +27,7 @@
     // reg_write_en_MEM     传给下一流水段的通用寄存器写使能
     // cache_write_en_MEM   传给下一流水段的按字节写入data cache
 
-// 实验要求  
+// 实验要求
     // 无需修改
 
 
@@ -38,22 +38,28 @@ module Ctrl_MEM(
     input wire [2:0] load_type_EX,
     input wire reg_write_en_EX,
     input wire [3:0] cache_write_en_EX,
+    input wire rd_req_EX,
+    input wire wr_req_EX,
     output reg wb_select_MEM,
     output reg [2:0] load_type_MEM,
     output reg reg_write_en_MEM,
-    output reg [3:0] cache_write_en_MEM
+    output reg [3:0] cache_write_en_MEM,
+    output reg rd_req_MEM,
+    output reg wr_req_MEM
     );
 
-    initial 
+    initial
     begin
         wb_select_MEM = 0;
         load_type_MEM = 3'h0;
         reg_write_en_MEM = 0;
         cache_write_en_MEM = 4'h0;
+        rd_req_MEM = 0;
+        wr_req_MEM = 0;
     end
-    
+
     always@(posedge clk)
-        if (!bubbleM) 
+        if (!bubbleM)
         begin
             if (flushM)
             begin
@@ -61,6 +67,8 @@ module Ctrl_MEM(
                 load_type_MEM <= 3'h0;
                 reg_write_en_MEM <= 0;
                 cache_write_en_MEM <= 4'h0;
+                rd_req_MEM <= 0;
+                wr_req_MEM <= 0;
             end
             else
             begin
@@ -68,7 +76,9 @@ module Ctrl_MEM(
                 load_type_MEM <= load_type_EX;
                 reg_write_en_MEM <= reg_write_en_EX;
                 cache_write_en_MEM <= cache_write_en_EX;
+                rd_req_MEM <= rd_req_EX;
+                wr_req_MEM <= wr_req_EX;
             end
         end
-    
+
 endmodule

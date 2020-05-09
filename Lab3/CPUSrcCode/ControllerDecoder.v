@@ -59,7 +59,9 @@ module ControllerDecoder(
     output wire csr_write_en,
     output wire csr_read_en,
     output wire load_csr,
-    output wire csr_src
+    output wire csr_src,
+    output wire rd_req,
+    output wire wr_req
     );
 
     // TODO: Complete this module
@@ -94,6 +96,9 @@ module ControllerDecoder(
             3'b011, 3'b111 : csr_op = `CSRRC;
         endcase
     end
+
+    assign rd_req = opcode == `OP_LOAD;
+    assign wr_req = opcode == `OP_STORE;
 
     always @(*) begin
         if (opcode == `OP_AUIPC || opcode == `OP_STORE || opcode == `OP_LOAD)

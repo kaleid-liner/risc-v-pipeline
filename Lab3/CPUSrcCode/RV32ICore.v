@@ -67,6 +67,10 @@ module RV32ICore(
     wire csr_src_ID, csr_src_EX;
     wire [31:0] csr_in_data;
     wire [31:0] csr_out_data;
+    // cache
+    wire wr_req_ID, wr_req_EX, wr_req_MEM;
+    wire rd_req_ID, rd_req_EX, rd_req_MEM;
+    wire miss;
 
 
 
@@ -192,7 +196,9 @@ module RV32ICore(
         .csr_write_en(csr_write_en_ID),
         .csr_read_en(csr_read_en_ID),
         .load_csr(load_csr_ID),
-        .csr_src(csr_src_ID)
+        .csr_src(csr_src_ID),
+        .rd_req(rd_req_ID),
+        .wr_req(wr_req_ID)
     );
 
     ImmExtend ImmExtend1(
@@ -271,12 +277,14 @@ module RV32ICore(
         .cache_write_en_ID(cache_write_en_ID),
         .alu_src1_ID(alu_src1_ID),
         .alu_src2_ID(alu_src2_ID),
-        .jalr_EX(jalr_EX),
         .csr_op_ID(csr_op_ID),
         .csr_write_en_ID(csr_write_en_ID),
         .csr_read_en_ID(csr_read_en_ID),
         .load_csr_ID(load_csr_ID),
         .csr_src_ID(csr_src_ID),
+        .rd_req_ID(rd_req_ID),
+        .wr_req_ID(wr_req_ID),
+        .jalr_EX(jalr_EX),
         .ALU_func_EX(ALU_func_EX),
         .br_type_EX(br_type_EX),
         .load_npc_EX(load_npc_EX),
@@ -291,7 +299,9 @@ module RV32ICore(
         .csr_write_en_EX(csr_write_en_EX),
         .csr_read_en_EX(csr_read_en_EX),
         .load_csr_EX(load_csr_EX),
-        .csr_src_EX(csr_src_EX)
+        .csr_src_EX(csr_src_EX),
+        .rd_req_EX(rd_req_EX),
+        .wr_req_EX(wr_req_EX)
     );
 
 
@@ -348,10 +358,14 @@ module RV32ICore(
         .load_type_EX(load_type_EX),
         .reg_write_en_EX(reg_write_en_EX),
         .cache_write_en_EX(cache_write_en_EX),
+        .rd_req_EX(rd_req_EX),
+        .wr_req_EX(wr_req_EX),
         .wb_select_MEM(wb_select_MEM),
         .load_type_MEM(load_type_MEM),
         .reg_write_en_MEM(reg_write_en_MEM),
-        .cache_write_en_MEM(cache_write_en_MEM)
+        .cache_write_en_MEM(cache_write_en_MEM),
+        .rd_req_MEM(rd_req_MEM),
+        .wr_req_MEM(wr_req_MEM)
     );
 
     ControlStatusRegister ControlStatusRegister1 (
@@ -383,6 +397,10 @@ module RV32ICore(
         .debug_addr(CPU_Debug_DataCache_A2),
         .in_data(reg2_MEM),
         .debug_in_data(CPU_Debug_DataCache_WD2),
+        .rst(CPU_RST),
+        .rd_req(rd_req_MEM),
+        .wr_req(wr_req_MEM),
+        .miss(miss),
         .debug_out_data(CPU_Debug_DataCache_RD2),
         .data_WB(data_WB)
     );
@@ -432,6 +450,9 @@ module RV32ICore(
         .reg_write_en_WB(reg_write_en_WB),
         .alu_src1(alu_src1_EX),
         .alu_src2(alu_src2_EX),
+        .rd_req(rd_req_MEM),
+        .wr_req(wr_req_MEM),
+        .miss(miss),
         .flushF(flushF),
         .bubbleF(bubbleF),
         .flushD(flushD),
