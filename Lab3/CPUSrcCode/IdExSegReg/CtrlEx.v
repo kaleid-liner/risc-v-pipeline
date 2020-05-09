@@ -152,7 +152,7 @@ module Ctrl_EX(
                 load_csr_EX <= load_csr_ID;
                 csr_src_EX <= csr_src_ID;
                 rd_req_EX <= rd_req_ID;
-                wr_req_EX <= rd_req_ID;
+                wr_req_EX <= wr_req_ID;
             end
         end
 

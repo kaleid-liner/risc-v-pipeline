@@ -6,7 +6,7 @@ module cache #(
     parameter  TAG_ADDR_LEN  = 6, // tag长度
     parameter  WAY_CNT       = 4, // 组相连度，决定了每组中有多少路line，这里是直接映射型cache，因此该参数没用到
     parameter  WAY_LEN       = 2,
-    parameter  LRU           = 1  // 使用 LRU 替换策略？否则使用 FIFO
+    parameter  LRU           = 0  // 使用 LRU 替换策略？否则使用 FIFO
 )(
     input  clk, rst,
     output miss,               // 对CPU发出的miss信号
@@ -57,9 +57,10 @@ always @ (*) begin              // 判断 输入的address 是否在 cache 中�
     cache_hit = 1'b0;
     way_select = 0;
     for (integer i = 0; i < WAY_CNT; i++) begin
-        if(valid[set_addr][i] && cache_tags[set_addr][i] == tag_addr)   // 如果 cache line有效，并且tag与输入地址中的tag相等，则命中
+        if (valid[set_addr][i] && cache_tags[set_addr][i] == tag_addr) begin
             cache_hit = 1'b1;
             way_select = i;
+        end
     end
 end
 

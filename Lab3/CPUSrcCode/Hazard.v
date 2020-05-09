@@ -87,7 +87,7 @@ module HarzardUnit(
     end
 
     always @(*) begin
-        if ((rd_req | wr_reg) & miss) begin
+        if ((rd_req | wr_req) & miss) begin
             mem_bubbleF = 1;
             mem_bubbleD = 1;
             mem_bubbleE = 1;
