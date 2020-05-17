@@ -6,7 +6,7 @@ module cache #(
     parameter  TAG_ADDR_LEN  = 6, // tag长度
     parameter  WAY_CNT       = 4, // 组相连度，决定了每组中有多少路line，这里是直接映射型cache，因此该参数没用到
     parameter  WAY_LEN       = 2,
-    parameter  LRU           = 0  // 使用 LRU 替换策略？否则使用 FIFO
+    parameter  LRU           = 1  // 使用 LRU 替换策略？否则使用 FIFO
 )(
     input  clk, rst,
     output miss,               // 对CPU发出的miss信号
@@ -53,6 +53,9 @@ reg cache_hit = 1'b0;
 reg [WAY_LEN-1:0] way_select;
 reg [WAY_LEN-1:0] swap_select;
 
+reg [31:0] total_cnt;
+reg [31:0] miss_cnt;
+
 always @ (*) begin              // 判断 输入的address 是否在 cache 中命中
     cache_hit = 1'b0;
     way_select = 0;
@@ -73,36 +76,13 @@ end
     FIFO shouldn't update history_matrix when cache hit
     LRU should update history_matrix whether cache hit or miss
 */
-reg [WAY_CNT-1:0] history_matrix [WAY_CNT-1];
+reg [WAY_CNT-1:0] history_matrix [SET_SIZE][WAY_CNT];
 
 always @ (*) begin
     swap_select = 0;
     for (integer i = 0; i < WAY_CNT; i++) begin
-        if (&history_matrix[i])
+        if (&history_matrix[set_addr][i])
             swap_select = i;
-    end
-end
-
-wire [WAY_LEN-1:0] way_index = cache_hit ? way_select : swap_select;
-
-always @ (posedge clk or posedge rst) begin
-    if (rst) begin
-        for (integer i = 0; i < WAY_CNT; i++) begin
-            for (integer j = 0; j < i; j++) begin
-                history_matrix[i][j] <= 1'b0;
-            end
-            for (integer j = i; j < WAY_CNT; j++) begin
-                history_matrix[i][j] <= 1'b1;
-            end
-        end
-    end else if ((rd_req | wr_req) & (LRU | ~cache_hit)) begin
-        // set column to 1
-        for (integer i = 0; i < WAY_CNT; i++)
-            history_matrix[i][way_index] <= 1'b1;
-        // set row to 0
-        for (integer j = 0; j < WAY_CNT; j++)
-            if (j != way_index)
-                history_matrix[way_index][j] <= 1'b0;
     end
 end
 
@@ -120,15 +100,40 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
         mem_wr_addr <= 0;
         {mem_rd_tag_addr, mem_rd_set_addr} <= 0;
         rd_data <= 0;
+
+        total_cnt <= 0;
+        miss_cnt <= 0;
+
+        for (integer k = 0; k < SET_SIZE; k++) begin
+            for (integer i = 0; i < WAY_CNT; i++) begin
+                for (integer j = 0; j < i; j++) begin
+                    history_matrix[k][i][j] <= 1'b0;
+                end
+                for (integer j = i; j < WAY_CNT; j++) begin
+                    history_matrix[k][i][j] <= 1'b1;
+                end
+            end
+        end
     end else begin
         case(cache_stat)
         IDLE:       begin
                         if(cache_hit) begin
                             if(rd_req) begin    // 如果cache命中，并且是读请求，
                                 rd_data <= cache_mem[set_addr][way_select][line_addr];   //则直接从cache中取出要读的数据
+                                total_cnt <= total_cnt + 1;
                             end else if(wr_req) begin // 如果cache命中，并且是写请求，
                                 cache_mem[set_addr][way_select][line_addr] <= wr_data;   // 则直接向cache中写入数据
                                 dirty[set_addr][way_select] <= 1'b1;                     // 写数据的同时置脏位
+                                total_cnt <= total_cnt + 1;
+                            end
+
+                            if (LRU && (rd_req | wr_req)) begin
+                                for (integer i = 0; i < WAY_CNT; i++)
+                                    history_matrix[set_addr][i][way_select] <= 1'b1;
+                                // set row to 0
+                                for (integer j = 0; j < WAY_CNT; j++)
+                                    if (j != way_select)
+                                        history_matrix[set_addr][way_select][j] <= 1'b0;
                             end
                         end else begin
                             if(wr_req | rd_req) begin   // 如果 cache 未命中，并且有读写请求，则需要进行换入
@@ -140,6 +145,7 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                                     cache_stat  <= SWAP_IN;
                                 end
                                 {mem_rd_tag_addr, mem_rd_set_addr} <= {tag_addr, set_addr};
+                                miss_cnt <= miss_cnt + 1;
                             end
                         end
                     end
@@ -159,6 +165,13 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                         valid     [mem_rd_set_addr][swap_select] <= 1'b1;
                         dirty     [mem_rd_set_addr][swap_select] <= 1'b0;
                         cache_stat <= IDLE;        // 回到就绪状态
+
+                        for (integer i = 0; i < WAY_CNT; i++)
+                            history_matrix[set_addr][i][swap_select] <= 1'b1;
+                        // set row to 0
+                        for (integer j = 0; j < WAY_CNT; j++)
+                            if (j != swap_select)
+                                history_matrix[set_addr][swap_select][j] <= 1'b0;
                     end
         endcase
     end
