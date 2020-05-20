@@ -67,6 +67,7 @@ module Ctrl_EX(
     input wire csr_src_ID,
     input wire rd_req_ID,
     input wire wr_req_ID,
+    input wire pred_take_ID,
     output reg jalr_EX,
     output reg [3:0] ALU_func_EX,
     output reg [2:0] br_type_EX,
@@ -84,7 +85,8 @@ module Ctrl_EX(
     output reg load_csr_EX,
     output reg csr_src_EX,
     output reg rd_req_EX,
-    output reg wr_req_EX
+    output reg wr_req_EX,
+    output reg pred_take_EX
     );
 
     initial
@@ -107,6 +109,7 @@ module Ctrl_EX(
         csr_src_EX = 0;
         rd_req_EX = 0;
         wr_req_EX = 0;
+        pred_take_EX = 0;
     end
 
     always@(posedge clk)
@@ -132,6 +135,7 @@ module Ctrl_EX(
                 csr_src_EX <= 0;
                 rd_req_EX <= 0;
                 wr_req_EX <= 0;
+                pred_take_EX <= 0;
             end
             else
             begin
@@ -153,6 +157,7 @@ module Ctrl_EX(
                 csr_src_EX <= csr_src_ID;
                 rd_req_EX <= rd_req_ID;
                 wr_req_EX <= wr_req_ID;
+                pred_take_EX <= pred_take_ID;
             end
         end
 

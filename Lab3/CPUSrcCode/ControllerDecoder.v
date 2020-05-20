@@ -61,7 +61,8 @@ module ControllerDecoder(
     output wire load_csr,
     output wire csr_src,
     output wire rd_req,
-    output wire wr_req
+    output wire wr_req,
+    output wire btb_wr_en
     );
 
     // TODO: Complete this module
@@ -89,6 +90,8 @@ module ControllerDecoder(
     assign load_csr = opcode == `OP_CSR;
     assign csr_write_en = opcode == `OP_CSR && (rs1 != 5'd0 || funct3[1:0] == 2'b01);
     assign csr_read_en = opcode == `OP_CSR && rd != 5'd0;
+
+    assign btb_wr_en = opcode == `OP_BR;
     always @(*) begin
         case (funct3)
             3'b001, 3'b101 : csr_op = `CSRRW;

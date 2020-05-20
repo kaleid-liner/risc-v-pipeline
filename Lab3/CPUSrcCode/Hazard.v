@@ -61,6 +61,7 @@ module HarzardUnit(
     input wire rd_req,
     input wire wr_req,
     input wire miss,
+    input wire pred_take,
     output reg flushF, bubbleF, flushD, bubbleD, flushE, bubbleE, flushM, bubbleM, flushW, bubbleW,
     output reg [1:0] op1_sel, op2_sel, reg2_sel
     );
@@ -176,7 +177,7 @@ module HarzardUnit(
         if (jalr) begin
             jump_flushD = 1;
             jump_flushE = 1;
-        end else if (br) begin
+        end else if (br != pred_take) begin
             jump_flushD = 1;
             jump_flushE = 1;
         end else if (jal) begin

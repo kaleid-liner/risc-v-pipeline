@@ -71,6 +71,10 @@ module RV32ICore(
     wire wr_req_ID, wr_req_EX, wr_req_MEM;
     wire rd_req_ID, rd_req_EX, rd_req_MEM;
     wire miss;
+    // btb
+    wire is_branch;
+    wire [31:0] pred_pc;
+    wire pred_take_ID, pred_take_EX;
 
 
 
@@ -102,6 +106,7 @@ module RV32ICore(
 
     assign csr_in_data = csr_src_EX ? {27'd0, reg1_src_EX} : ALU_op1;
 
+    assign is_branch = br_type_EX != `NOBRANCH;
 
     //Module connections
     // ---------------------------------------------
@@ -114,9 +119,11 @@ module RV32ICore(
         .jal_target(jal_target),
         .jalr_target(ALU_out),
         .br_target(br_target),
+        .btb_target(btb_target),
         .jal(jal),
         .jalr(jalr_EX),
         .br(br),
+        .pred_take(pred_take_ID),
         .NPC(NPC)
     );
 
@@ -156,6 +163,16 @@ module RV32ICore(
         .debug_data(CPU_Debug_InstCache_RD2)
     );
 
+    BTB BTB1 (
+        .clk(CPU_CLK),
+        .rst(CPU_RST),
+        .rd_pc(PC_IF),
+        .wr_pc(PC_EX),
+        .taken(br),
+        .wr_en(is_branch),
+        .pred_pc(pred_pc),
+        .pred_take(pred_take_ID)
+    )
 
 
     // ---------------------------------------------
@@ -284,6 +301,7 @@ module RV32ICore(
         .csr_src_ID(csr_src_ID),
         .rd_req_ID(rd_req_ID),
         .wr_req_ID(wr_req_ID),
+        .pred_take_ID(pred_take_ID),
         .jalr_EX(jalr_EX),
         .ALU_func_EX(ALU_func_EX),
         .br_type_EX(br_type_EX),
@@ -301,7 +319,8 @@ module RV32ICore(
         .load_csr_EX(load_csr_EX),
         .csr_src_EX(csr_src_EX),
         .rd_req_EX(rd_req_EX),
-        .wr_req_EX(wr_req_EX)
+        .wr_req_EX(wr_req_EX),
+        .pred_take_EX(pred_take_EX)
     );
 
 
@@ -453,6 +472,7 @@ module RV32ICore(
         .rd_req(rd_req_MEM),
         .wr_req(wr_req_MEM),
         .miss(miss),
+        .pred_take(Pred_take_EX),
         .flushF(flushF),
         .bubbleF(bubbleF),
         .flushD(flushD),
