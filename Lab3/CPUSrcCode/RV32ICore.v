@@ -169,6 +169,7 @@ module RV32ICore(
         .rd_pc(PC_IF),
         .wr_pc(PC_EX),
         .taken(br),
+        .pred_take_EX(pred_take_EX),
         .wr_en(is_branch),
         .pred_pc(pred_pc),
         .pred_take(pred_take_ID)

@@ -9,6 +9,7 @@ module BTB #(
     input wire [31:0] rd_pc, wr_pc,
     input wire taken,
     input wire wr_en,
+    input wire pred_take_EX,
     output wire [31:0] pred_pc,
     output wire pred_take
 );
@@ -49,11 +50,11 @@ always @ (posedge clk or posedge rst) begin
         end
         for (integer i = 0; i < TAG_SIZE)
     end else if (wr_en) begin
-        if (taken) begin
+        if (taken & !pred_take) begin
             valid[wr_set_addr] <= 1;
             buffer_tags[wr_set_addr] <= tag_addr;
             buffer[wr_set_addr] <= wr_pc;
-        end else begin
+        end else if (!taken & pred_take)
             valid[wr_set_addr] <= 0;
         end
     end
