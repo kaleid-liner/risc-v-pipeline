@@ -44,31 +44,23 @@ assign pred_pc = buffer[rd_set_addr];
 always @ (posedge clk or posedge rst) begin
     if (rst) begin
         for (integer i = 0; i < SET_SIZE; i++) begin
+            bht[i] <= 2'b00;
+        end
+        for (integer i = 0; i < SET_SIZE; i++) begin
             valid[i] <= 0;
             buffer_tags[i] <= 0;
             buffer[i] <= 0;
         end
     end else if (wr_en) begin
-        if (taken & !pred_take_EX) begin
-            valid[wr_set_addr] <= 1;
-            buffer_tags[wr_set_addr] <= wr_tag_addr;
-            buffer[wr_set_addr] <= br_target;
-        end else if (!taken & pred_take_EX) begin
-            valid[wr_set_addr] <= 0;
-        end
-    end
-end
-
-always @ (posedge clk or posedge rst) begin
-    if (rst) begin
-        for (integer i = 0; i < SET_SIZE; i++) begin
-            bht[i] <= 2'b11;
-        end
-    end else if (wr_en) begin
         if (taken) begin
             case (bht[wr_set_addr])
                 2'b00: bht[wr_set_addr] <= 2'b01;
-                2'b01: bht[wr_set_addr] <= 2'b11;
+                2'b01: begin
+                    bht[wr_set_addr] <= 2'b11;
+                    valid[wr_set_addr] <= 1;
+                    buffer_tags[wr_set_addr] <= wr_tag_addr;
+                    buffer[wr_set_addr] <= br_target;
+                end
                 2'b10: bht[wr_set_addr] <= 2'b11;
                 2'b11: bht[wr_set_addr] <= 2'b11;
             endcase
@@ -76,7 +68,10 @@ always @ (posedge clk or posedge rst) begin
             case (bht[wr_set_addr])
                 2'b00: bht[wr_set_addr] <= 2'b00;
                 2'b01: bht[wr_set_addr] <= 2'b00;
-                2'b10: bht[wr_set_addr] <= 2'b00;
+                2'b10: begin
+                    bht[wr_set_addr] <= 2'b00;
+                    valid[wr_set_addr] <= 0;
+                end
                 2'b11: bht[wr_set_addr] <= 2'b10;
             endcase
         end
