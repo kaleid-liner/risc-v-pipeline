@@ -29,7 +29,8 @@
 
 module NPC_Generator(
     input wire [31:0] PC, jal_target, jalr_target, br_target, btb_target,
-    input wire jal, jalr, br, pred_take,
+    input wire jal, jalr, br, pred_take_IF, pred_take_EX,
+    input wire [31:0] PC_EX,
     output reg [31:0] NPC
     );
 
@@ -38,11 +39,13 @@ module NPC_Generator(
     always @(*) begin
         if (jalr)
             NPC = jalr_target;
-        else if (br)
+        else if (br & !pred_take_EX)
             NPC = br_target;
+        else if (!br & pred_take_EX)
+            NPC = PC_EX;
         else if (jal)
             NPC = jal_target;
-        else if (pred_take)
+        else if (pred_take_IF)
             NPC = btb_target;
         else
             NPC = PC;

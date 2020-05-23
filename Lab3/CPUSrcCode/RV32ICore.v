@@ -32,7 +32,7 @@ module RV32ICore(
     wire [31:0] jal_target, br_target;
     wire jal, br;
     wire jalr_ID, jalr_EX;
-    wire [31:0] NPC, PC_IF, PC_4, PC_ID, PC_EX;
+    wire [31:0] NPC, PC_IF, PC_4, PC_ID, PC_EX, CPC_EX;
     wire [31:0] inst_ID;
     wire reg_write_en_ID, reg_write_en_EX, reg_write_en_MEM, reg_write_en_WB;
     wire [4:0] reg1_src_EX;
@@ -74,7 +74,7 @@ module RV32ICore(
     // btb
     wire is_branch;
     wire [31:0] pred_pc;
-    wire pred_take_ID, pred_take_EX;
+    wire pred_take_IF, pred_take_ID, pred_take_EX;
 
 
 
@@ -108,6 +108,8 @@ module RV32ICore(
 
     assign is_branch = br_type_EX != `NOBRANCH;
 
+    assign CPC_EX = PC_EX - 4;
+
     //Module connections
     // ---------------------------------------------
     // PC-Generator
@@ -119,11 +121,13 @@ module RV32ICore(
         .jal_target(jal_target),
         .jalr_target(ALU_out),
         .br_target(br_target),
-        .btb_target(btb_target),
+        .btb_target(pred_pc),
         .jal(jal),
         .jalr(jalr_EX),
         .br(br),
-        .pred_take(pred_take_ID),
+        .pred_take_IF(pred_take_IF),
+        .pred_take_EX(pred_take_EX),
+        .PC_EX(PC_EX),
         .NPC(NPC)
     );
 
@@ -167,13 +171,22 @@ module RV32ICore(
         .clk(CPU_CLK),
         .rst(CPU_RST),
         .rd_pc(PC_IF),
-        .wr_pc(PC_EX),
+        .wr_pc(CPC_EX),
         .taken(br),
         .pred_take_EX(pred_take_EX),
         .wr_en(is_branch),
         .pred_pc(pred_pc),
-        .pred_take(pred_take_ID)
-    )
+        .pred_take(pred_take_IF),
+        .br_target(br_target)
+    );
+
+    PredTake_ID PredTake_ID1 (
+        .clk(CPU_CLK),
+        .flushD(flushD),
+        .bubbleD(bubbleD),
+        .pred_take_IF(pred_take_IF),
+        .pred_take_ID(pred_take_ID)
+    );
 
 
     // ---------------------------------------------
@@ -473,7 +486,7 @@ module RV32ICore(
         .rd_req(rd_req_MEM),
         .wr_req(wr_req_MEM),
         .miss(miss),
-        .pred_take(Pred_take_EX),
+        .pred_take(pred_take_EX),
         .flushF(flushF),
         .bubbleF(bubbleF),
         .flushD(flushD),
