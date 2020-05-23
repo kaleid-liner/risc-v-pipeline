@@ -1,0 +1,56 @@
+
+MatMul.om:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010054 <_start>:
+   10054:	00404713          	xori	a4,zero,4
+   10058:	00404693          	xori	a3,zero,4
+   1005c:	00e696b3          	sll	a3,a3,a4
+   10060:	00004633          	xor	a2,zero,zero
+   10064:	00e69533          	sll	a0,a3,a4
+   10068:	00a505b3          	add	a1,a0,a0
+   1006c:	000042b3          	xor	t0,zero,zero
+
+00010070 <MatMulLoopI>:
+   10070:	00004333          	xor	t1,zero,zero
+
+00010074 <MatMulLoopJ>:
+   10074:	00004e33          	xor	t3,zero,zero
+   10078:	000043b3          	xor	t2,zero,zero
+
+0001007c <MatMulLoopK>:
+   1007c:	00e29eb3          	sll	t4,t0,a4
+   10080:	007e8eb3          	add	t4,t4,t2
+   10084:	00ae8eb3          	add	t4,t4,a0
+   10088:	000eae83          	lw	t4,0(t4)
+   1008c:	00e39f33          	sll	t5,t2,a4
+   10090:	006f0f33          	add	t5,t5,t1
+   10094:	00bf0f33          	add	t5,t5,a1
+   10098:	000f2f03          	lw	t5,0(t5)
+   1009c:	01eefeb3          	and	t4,t4,t5
+   100a0:	01de0e33          	add	t3,t3,t4
+   100a4:	00438393          	addi	t2,t2,4
+   100a8:	fcd3cae3          	blt	t2,a3,1007c <MatMulLoopK>
+   100ac:	00e29eb3          	sll	t4,t0,a4
+   100b0:	006e8eb3          	add	t4,t4,t1
+   100b4:	00ce8eb3          	add	t4,t4,a2
+   100b8:	01cea023          	sw	t3,0(t4)
+   100bc:	00430313          	addi	t1,t1,4
+   100c0:	fad34ae3          	blt	t1,a3,10074 <MatMulLoopJ>
+   100c4:	00428293          	addi	t0,t0,4
+   100c8:	fad2c4e3          	blt	t0,a3,10070 <MatMulLoopI>
+   100cc:	00100293          	li	t0,1
+   100d0:	00e292b3          	sll	t0,t0,a4
+   100d4:	00e292b3          	sll	t0,t0,a4
+   100d8:	00229293          	slli	t0,t0,0x2
+   100dc:	00000313          	li	t1,0
+
+000100e0 <Loop>:
+   100e0:	00032383          	lw	t2,0(t1)
+   100e4:	00430313          	addi	t1,t1,4
+   100e8:	fe534ce3          	blt	t1,t0,100e0 <Loop>
+
+000100ec <InfLoop>:
+   100ec:	0000006f          	j	100ec <InfLoop>
