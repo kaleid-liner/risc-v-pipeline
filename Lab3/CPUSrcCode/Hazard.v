@@ -71,20 +71,20 @@ module HarzardUnit(
     reg reg1_flushM, reg1_bubbleE, reg1_bubbleF, reg1_bubbleD;
     reg reg2_flushM, reg2_bubbleE, reg2_bubbleF, reg2_bubbleD;
     reg jump_flushD, jump_flushE;
-    reg mem_flushW, mem_bubbleF, mem_bubbleD, mem_bubbleE, mem_bubbleM;
+    reg mem_bubbleW, mem_bubbleF, mem_bubbleD, mem_bubbleE, mem_bubbleM;
 
     always @(*) begin
         flushF = rst;
         flushD = jump_flushD | rst;
         flushE = jump_flushE | rst;
         flushM = reg1_flushM | reg2_flushM | rst;
-        flushW = rst | mem_flushW;
+        flushW = rst;
 
         bubbleF = reg1_bubbleF | reg2_bubbleF | mem_bubbleF;
         bubbleD = reg1_bubbleD | reg2_bubbleD | mem_bubbleD;
         bubbleE = reg1_bubbleE | reg2_bubbleE | mem_bubbleE;
         bubbleM = mem_bubbleM;
-        bubbleW = 0;
+        bubbleW = mem_bubbleW;
     end
 
     always @(*) begin
@@ -93,13 +93,13 @@ module HarzardUnit(
             mem_bubbleD = 1;
             mem_bubbleE = 1;
             mem_bubbleM = 1;
-            mem_flushW = 1;
+            mem_bubbleW = 1;
         end else begin
             mem_bubbleF = 0;
             mem_bubbleD = 0;
             mem_bubbleE = 0;
             mem_bubbleM = 0;
-            mem_flushW = 0;
+            mem_bubbleW = 0;
         end
     end
 
