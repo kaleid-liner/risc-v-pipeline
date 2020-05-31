@@ -38,7 +38,7 @@ wire [UNUSED_ADDR_LEN-1:0] wr_unused_addr;
 assign {rd_unused_addr, rd_tag_addr, rd_set_addr, rd_word_addr} = rd_pc;
 assign {wr_unused_addr, wr_tag_addr, wr_set_addr, wr_word_addr} = wr_pc;
 
-assign pred_take = valid[rd_set_addr] & (rd_tag_addr == buffer_tags[rd_set_addr]) & bht[1];
+assign pred_take = valid[rd_set_addr] & (rd_tag_addr == buffer_tags[rd_set_addr]) & bht[rd_set_addr][1];
 assign pred_pc = buffer[rd_set_addr];
 
 always @ (posedge clk or posedge rst) begin
